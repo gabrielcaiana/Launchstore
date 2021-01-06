@@ -33,19 +33,18 @@ module.exports = {
     let results = await Product.find(req.params.id)
     const product = results.rows[0]
 
+    if(!product) return res.send("Product not found!")
+
     product.old_price = formatPrice(product.old_price)
     product.price = formatPrice(product.price)
  
     results = await Category.all()
     const categories = results.rows
 
-    if(!product) res.send("Product not found!")
- 
     return res.render("products/edit.njk", {product, categories})
   },
 
   async put(req, res) {
-    console.log(req.body)
     const keys = Object.keys(req.body)
 
     for(key of keys) {
@@ -64,5 +63,11 @@ module.exports = {
     await Product.update(req.body)
     
     return res.redirect(`/products/${req.body.id}/edit`)
+  },
+
+  async delete(req, res) {
+    await Product.delete(req.body.id)
+
+    return res.redirect("/products/create")
   }
 };

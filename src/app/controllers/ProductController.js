@@ -26,7 +26,7 @@ module.exports = {
    let results = await Product.create(req.body)
    const productId = results.rows[0].id
    
-   return res.redirect(`products/${productId}`)
+   return res.redirect(`products/${productId}/edit`)
   },
   
   async edit(req, res) {
@@ -42,5 +42,27 @@ module.exports = {
     if(!product) res.send("Product not found!")
  
     return res.render("products/edit.njk", {product, categories})
+  },
+
+  async put(req, res) {
+    console.log(req.body)
+    const keys = Object.keys(req.body)
+
+    for(key of keys) {
+     if(req.body[key] == "") {
+      return res.send("Please, fill all fields!")
+     }
+    }
+
+    req.body.price = req.body.price.replace(/\D/g, "")
+
+    if(req.body.old_price != req.body.price) {
+      const oldProduct = await Product.find(req.body.id)
+      req.body.old_price = oldProduct.rows[0].price
+    }
+
+    await Product.update(req.body)
+    
+    return res.redirect(`/products/${req.body.id}/edit`)
   }
 };

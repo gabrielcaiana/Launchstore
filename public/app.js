@@ -13,3 +13,17 @@ const Mask = {
     }).format(value/100)
   }
 }
+
+const PhotosUpload = {
+  uploadLimit: 6,
+  handlerFileInput(event) {
+    const { files: fileList } = event.target
+    const { uploadLimit } = PhotosUpload
+
+    if (fileList.length > uploadLimit) {
+      alert(`Envie no máximo ${uploadLimit} fotos`)
+      event.preventDefault()
+      return
+    }
+  }
+}
